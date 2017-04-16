@@ -183,7 +183,7 @@ class Game:
 
 if __name__ == '__main__':
     # simple demo
-    game = Game(10, 10)
+    game = Game()
 
     while True:
         gonna_print = [[' '] * WIDTH for y in range(HEIGHT)]
