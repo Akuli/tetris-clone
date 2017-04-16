@@ -98,6 +98,8 @@ class CursesUI:
                     # simple_wrapper). this is simpler than using atexit
                     sys.exit("Game Over :(")
 
+            time.sleep(0.01)
+
 
 def main(stdscr):
     # this reuses COLOR_ constants as color pair numbers, it works
