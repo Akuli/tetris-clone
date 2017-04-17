@@ -113,22 +113,18 @@ class Game:
     def __init__(self):
         self.moving_block = None
         self.frozen_squares = {}   # {(x, y): block_shape}
-        self.level = 1
-        self._level_counter = 0
+        self.score = 0
         self.add_block()
+
+    @property
+    def level(self):
+        # levels start at 1
+        return self.score // 30 + 1
 
     @property
     def delay(self):
         """The waiting time between do_something() calls as milliseconds."""
         return 300 - (30 * self.level)
-
-    def shape_at(self, x, y):
-        try:
-            return self.frozen_squares[(x, y)]
-        except KeyError:
-            if (x, y) in self.moving_block.get_coords():
-                return self.moving_block.shape_letter
-            return None
 
     def add_block(self):
         letter = random.choice(list(SHAPES))
@@ -138,6 +134,14 @@ class Game:
             self.moving_block = TwoRotationsBlock(self, letter)
         else:
             self.moving_block = Block(self, letter)
+
+    def shape_at(self, x, y):
+        try:
+            return self.frozen_squares[(x, y)]
+        except KeyError:
+            if (x, y) in self.moving_block.get_coords():
+                return self.moving_block.shape_letter
+            return None
 
     def freeze_moving_block(self):
         for x, y in self.moving_block.get_coords():
@@ -162,16 +166,10 @@ class Game:
         if self.moving_block.move_down():
             return
 
-        # time to add a new block and maybe increment level
         self.freeze_moving_block()
         self.add_block()
         self.delete_full_lines()
-
-        if self._level_counter == 30:
-            self.level += 1
-            self._level_counter = 0
-        else:
-            self._level_counter += 1
+        self.score += 1
 
     def game_over(self):
         """Return True if the game is over."""
@@ -186,19 +184,10 @@ if __name__ == '__main__':
     game = Game()
 
     while True:
-        gonna_print = [[' '] * WIDTH for y in range(HEIGHT)]
-        for x in range(WIDTH):
-            for y in range(HEIGHT):
-                try:
-                    character = game.frozen_squares[(x, y)]
-                except KeyError:
-                    if (x, y) in game.moving_block.get_coords():
-                        character = game.moving_block.shape_letter
-                    else:
-                        character = ' '
-                gonna_print[y][x] = character
-
-        for row in reversed(gonna_print):
+        for y in range(HEIGHT-1, -1, -1):
+            row = []
+            for x in range(WIDTH):
+                row.append(game.shape_at(x, y) or ' ')
             print('|', ' '.join(row), '|')
 
         input("Press Enter to continue...")

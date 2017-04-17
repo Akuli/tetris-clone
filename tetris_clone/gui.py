@@ -14,13 +14,18 @@ COLORS = {
 }
 
 
-class TkinterGUI:
+class TkinterGUI(tk.Frame):
 
-    def __init__(self, parent, game, scale=20, **canvas_kwargs):
+    def __init__(self, parent, game, scale=20, **kwargs):
+        super().__init__(parent, **kwargs)
         self.game = game
         self.canvas = tk.Canvas(
-            parent, width=core.WIDTH * scale, height=core.HEIGHT * scale,
-            **canvas_kwargs)
+            self, width=core.WIDTH * scale, height=core.HEIGHT * scale,
+            relief='ridge', **kwargs)
+        self.canvas.pack()
+        self.statusbar = tk.Label(self, relief='sunken', **kwargs)
+        self.statusbar.pack(side='bottom', fill='x')
+
         for key in ['A', 'a', 'S', 's', 'D', 'd', 'F', 'f',
                     'Left', 'Right', 'Up', 'Down', 'Return', 'space']:
             parent.bind('<' + key + '>', self.move, add=True)
@@ -30,9 +35,9 @@ class TkinterGUI:
             for y in range(core.HEIGHT):
                 left = x * scale
                 top = (core.HEIGHT - y - 1) * scale
-                item_id = self.canvas.create_rectangle(
-                    left, top, left + scale, top + scale)
-                self._canvas_content[(x, y)] = item_id
+                self._canvas_content[(x, y)] = self.canvas.create_rectangle(
+                    left, top, left + scale, top + scale,
+                    outline=self.canvas['bg'], fill=self.canvas['bg'])
 
         self._sleep_time = 300
         self._on_timeout()
@@ -45,6 +50,8 @@ class TkinterGUI:
             else:
                 color = COLORS[shape]
             self.canvas.itemconfig(item_id, fill=color)
+        self.statusbar['text'] = "Score %d, level %d" % (
+            self.game.score, self.game.level)
 
     def move(self, event):
         if event.keysym in {'A', 'a', 'Left'}:
@@ -79,7 +86,12 @@ class TkinterGUI:
 
 if __name__ == '__main__':
     root = tk.Tk()
+
     game = core.Game()
     gui = TkinterGUI(root, game, bg='black')
-    gui.canvas.pack()
+    gui.pack(fill='both', expand=True)
+
+    root.title("Tetris Clone")
+    root.update()
+    root.minsize(gui.winfo_reqwidth(), gui.winfo_reqheight())
     root.mainloop()

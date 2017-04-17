@@ -61,7 +61,6 @@ class CursesUI:
                                    curses.color_pair(COLORS[shape]))
 
         self.window.refresh()
-        curses.doupdate()
 
     def _handle_key(self, key):
         if key in {ord('Q'), ord('q')}:
@@ -96,7 +95,9 @@ class CursesUI:
                     # this goes to stderr and not stdout, we can't print
                     # here but sys.exit prints later (see comments in
                     # simple_wrapper). this is simpler than using atexit
-                    sys.exit("Game Over :(")
+                    sys.exit("Game Over :(\n"
+                             "You ended up on level %d with score %d."
+                             % (self.game.level, self.game.score))
 
             time.sleep(0.01)
 
