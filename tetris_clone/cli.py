@@ -63,15 +63,15 @@ class CursesUI:
         self.window.refresh()
 
     def _handle_key(self, key):
-        if key in {ord('Q'), ord('q')}:
+        if key in list(b'Qq'):     # list() is needed because 256 in b''
             sys.exit("Goodbye!")
-        if key in {ord('A'), ord('a'), curses.KEY_LEFT}:
+        if key in list(b'AaJj') + [curses.KEY_LEFT]:
             self.game.moving_block.move_left()
-        elif key in {ord('D'), ord('d'), curses.KEY_RIGHT}:
+        elif key in list(b'DdLl') + [curses.KEY_RIGHT]:
             self.game.moving_block.move_right()
-        elif key in {curses.KEY_ENTER, curses.KEY_UP}:
+        elif key in list(b'Kk') + [curses.KEY_ENTER, curses.KEY_UP]:
             self.game.moving_block.rotate()
-        elif key in {ord(' '), curses.KEY_DOWN}:
+        elif key in [ord(' '), curses.KEY_DOWN]:
             self.game.moving_block.move_down_all_the_way()
         elif key == curses.KEY_RESIZE:
             self.update_size()
