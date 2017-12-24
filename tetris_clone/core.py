@@ -1,7 +1,6 @@
 from functools import partialmethod    # requires Python 3.4 or newer
 import itertools
 import random
-import tkinter as tk
 
 WIDTH = 10
 HEIGHT = 20

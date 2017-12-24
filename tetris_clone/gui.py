@@ -16,14 +16,21 @@ COLORS = {
 
 class TkinterGUI(tk.Frame):
 
-    def __init__(self, parent, game, scale=20, **kwargs):
-        super().__init__(parent, **kwargs)
+    def __init__(self, parent, game, scale=20, *, fg='white', bg='black'):
+        super().__init__(parent, bg=bg)
         self.game = game
+
+        # the canvas is in a separate frame because setting the
+        # borderwidth of the canvas doesn't offset the items in the
+        # canvas correctly :(
+        canvasframe = tk.Frame(self, bg=bg, borderwidth=5, relief='ridge')
+        canvasframe.pack()
         self.canvas = tk.Canvas(
-            self, width=core.WIDTH * scale, height=core.HEIGHT * scale,
-            relief='ridge', **kwargs)
+            canvasframe, width=core.WIDTH * scale,
+            height=core.HEIGHT * scale, bg=bg)
         self.canvas.pack()
-        self.statusbar = tk.Label(self, relief='sunken', **kwargs)
+
+        self.statusbar = tk.Label(self, relief='sunken', fg=fg, bg=bg)
         self.statusbar.pack(side='bottom', fill='x')
 
         for key in ['A', 'a', 'S', 's', 'D', 'd', 'F', 'f',
@@ -88,10 +95,10 @@ if __name__ == '__main__':
     root = tk.Tk()
 
     game = core.Game()
-    gui = TkinterGUI(root, game, bg='black')
+    gui = TkinterGUI(root, game, fg='white', bg='black')
     gui.pack(fill='both', expand=True)
 
-    root.title("Tetris Clone")
     root.update()
     root.minsize(gui.winfo_reqwidth(), gui.winfo_reqheight())
+    root.title("Tetris Clone")
     root.mainloop()

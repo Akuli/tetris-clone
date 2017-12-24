@@ -60,6 +60,10 @@ class CursesUI:
                 self.window.addstr(curses_y, curses_x, '  ',
                                    curses.color_pair(COLORS[shape]))
 
+        self.window.addstr(
+            0, 0, "Level %d, score %d" % (self.game.level, self.game.score),
+            curses.color_pair(curses.COLOR_BLACK))
+
         self.window.refresh()
 
     def _handle_key(self, key):
